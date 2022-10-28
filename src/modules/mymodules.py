@@ -1,3 +1,4 @@
+
 import pygame
 import random
 import modules
@@ -16,6 +17,7 @@ def cursor(screen, mouse):
     screen.blit(crosshair_image, crosshair_image_rect)
 
 def zombieSpawn(entitygroup_zombie, entitygroup_player, textentitygroup, entitygroup):
-    zombie = modules.mysprites.Zombie(name='Zombie', target=random.choice(entitygroup_player.sprites()), entitygroup=entitygroup, textentitygroup=textentitygroup, selfentitygroup=entitygroup_zombie)
-    return zombie
+    zombie = modules.myentity.Zombie(name='Zombie', target=random.choice(entitygroup_player.sprites()), entitygroup=entitygroup, textentitygroup=textentitygroup, selfentitygroup=entitygroup_zombie)
 
+def bulletSpawn(mouse, shooter, damage, range, entitygroup, selfenemygroup):
+    modules.myentity.Bullet(vector=mouse, player=shooter, damage=damage, range=range, entitygroup=entitygroup, selfenemygroup=selfenemygroup)
