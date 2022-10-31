@@ -8,6 +8,7 @@ class Entity(pygame.sprite.Sprite):
     _instances = set()
 
     def __init__(self):
+        Entity._instances.add(self)
         super().__init__()
         self.image = pygame.Surface((40, 40))
         self.image.fill((0, 0, 0))
@@ -54,18 +55,21 @@ class Entity(pygame.sprite.Sprite):
 
 class Bullet(Entity):
     _instances = set()
+    layer = 3
 
-    def __init__(self, vector, player, damage=40, range=600, entitygroup=None, selfenemygroup=None):
+    def __init__(self, vector, player, damage=40, range=600, entitygroup=None, selfenemygroup=None, layerentityupdates=None):
         Bullet._instances.add(self)
-        Entity._instances.add(self)
         super().__init__()
+        if entitygroup != None:
+            self.add(entitygroup)
+        if layerentityupdates != None:
+            layerentityupdates.add(self, layer=self.layer)
         self.image = pygame.Surface((10, 10))
         self.image.fill((255, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = player.rect.center
         self.firstplace = player.rect.center
-        if entitygroup != None:
-            self.add(entitygroup)
+
         self.targets = selfenemygroup
         self.vector = vector
         self.range = range
@@ -103,7 +107,7 @@ class Bullet(Entity):
         elif distancecurrent == 0 or (distancestart - distancecurrent >= self.range):
             self.__del__()
 
-    def update(self, screen, mouse, mousestate, keystate, entitygroup, dtime, TARGET_FPS):
+    def update(self, screen, mouse, mousestate, keystate, entitygroup, layerentityupdates, dtime, TARGET_FPS):
         self.movement(dtime, TARGET_FPS)
 
     def __del__(self):
@@ -111,24 +115,26 @@ class Bullet(Entity):
 
 class Player(Entity):
     _instances = set()
+    layer = 1
 
-    def __init__(self, color, resolution, name='Player', entitygroup=None, selfentitygroup=None, selfenemygroup=None, textentitygroup=None):
+    def __init__(self, color, resolution, name='Player', entitygroup=None, selfentitygroup=None, selfenemygroup=None, selftextentitygroup=None, layerentityupdates=None):
         Player._instances.add(self)
-        Entity._instances.add(self)
         super().__init__()
+        if entitygroup != None:
+            self.add(entitygroup)
+        if selfentitygroup != None:
+            self.add(selfentitygroup)
+        if layerentityupdates != None:
+            layerentityupdates.add(self, layer = self.layer)
 
         self.resolution = resolution
         self.image = pygame.Surface((40, 40))
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.center = (self.resolution[0] / 2 + random.randint(1, 256), self.resolution[1] / 2 + random.randint(1, 256))
-        if entitygroup != None:
-            self.add(entitygroup)
-        if selfentitygroup != None:
-            self.add(selfentitygroup)
 
         self.weapon = Weapon(self, selfenemygroup) 
-        self.name = modules.myentity.Text(name, 24, entity=self, textentitygroup=textentitygroup)
+        self.name = modules.myentity.Text(name, 24, entity=self, textentitygroup=selftextentitygroup)
         self.health = 100
         self.maxhealth = 100
         self.energy = 100
@@ -140,7 +146,7 @@ class Player(Entity):
         kx = abs((self.speedx / v) if self.speedx != 0 else 1)
         ky = abs((self.speedy / v) if self.speedy != 0 else 1)
 
-        if keystate[pygame.K_LSHIFT] and self.energy != 0 and self.keyswith['K_LSHIFT']:
+        if keystate[pygame.K_LSHIFT] and self.energy != 0 and ((self.speedx != 0) or (self.speedy != 0)) and self.keyswith['K_LSHIFT']:
             sprint = 1.3
             self.energy = (self.energy - 15 * dtime) if self.energy > 0 else 0
             if self.energy == 0:
@@ -199,13 +205,13 @@ class Player(Entity):
         if self.rect.bottom > self.resolution[1]: self.rect.bottom = self.resolution[1]
         if self.rect.top < 0: self.rect.top = 0
 
-    def curWeapon(self, mouse, mousestate, keystate, entitygroup):
-        self.weapon.attack(mouse, mousestate, entitygroup)
+    def curWeapon(self, mouse, mousestate, keystate, entitygroup, layerentityupdates):
+        self.weapon.attack(mouse, mousestate, entitygroup, layerentityupdates)
         self.weapon.reload(keystate)
 
-    def update(self, screen, mouse, mousestate, keystate, entitygroup, dtime, TARGET_FPS):
+    def update(self, screen, mouse, mousestate, keystate, entitygroup, layerentityupdates, dtime, TARGET_FPS):
         self.movement(keystate, dtime, TARGET_FPS)
-        self.curWeapon(mouse, mousestate, keystate, entitygroup)
+        self.curWeapon(mouse, mousestate, keystate, entitygroup, layerentityupdates)
         self.borders()
         self.healthbar(screen)
         self.energybar(screen)
@@ -216,20 +222,23 @@ class Player(Entity):
 
 class Zombie(Entity):
     _instances = set()
+    layer = 2
 
-    def __init__(self, name='Zombie', target=None, entitygroup=None, selfentitygroup=None, textentitygroup=None):
+    def __init__(self, name='Zombie', target=None, entitygroup=None, selfentitygroup=None, selftextentitygroup=None, layerentityupdates=None):
         Zombie._instances.add(self)
-        Entity._instances.add(self)
         super().__init__()
+        if entitygroup != None:
+            self.add(entitygroup)
+        if selfentitygroup != None:
+            self.add(selfentitygroup)
+        if layerentityupdates != None:
+            layerentityupdates.add(self, layer=self.layer)
         self.image = pygame.Surface((40, 40))
         self.image.fill((75, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (360, 360)
-        if entitygroup != None:
-            self.add(entitygroup)
-        if selfentitygroup !=None:
-            self.add(selfentitygroup)
-        self.name = modules.myentity.Text(name, 24, entity=self, textentitygroup=textentitygroup)
+
+        self.name = modules.myentity.Text(name, 24, entity=self, textentitygroup=selftextentitygroup)
         self.health = 200
         self.maxhealth = 200
         self.target = target
@@ -253,7 +262,7 @@ class Zombie(Entity):
     def attack(self, screen):   
         None
 
-    def update(self, screen, mouse, mousestate, keystate, entitygroup, dtime, TARGET_FPS):
+    def update(self, screen, mouse, mousestate, keystate, entitygroup, layerentityupdates, dtime, TARGET_FPS):
         self.movement(dtime, TARGET_FPS)
         self.healthbar(screen)
 
@@ -265,29 +274,67 @@ class Zombie(Entity):
 class Text(pygame.sprite.Sprite):
     _instances = set()
 
-    def __init__(self, text='text', size=24, color = (0, 0, 0), position=(0, 0), alone=False, entity=None, textentitygroup=None):
-        if alone == False:
-            Text._instances.add(self)
+    def __init__(self, text=None, size=24, color = (0, 0, 0), position=(0, 0), visible=True, side=None, entity=None, textentitygroup=None): 
+        Text._instances.add(self)
         super().__init__()
+        if textentitygroup != None:
+            self.add(textentitygroup)
+
         self.font = pygame.font.SysFont('arial', size)
         self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
-        self.rect.center = position
-        if textentitygroup != None:
-            self.add(textentitygroup)
         self.entity = entity
+        self.position = position
+        self.side = side
+        self.visible = visible
+
+    def textedit(self, text, color):
+        self.image = self.font.render(text, True, color)
+        self.rect = self.image.get_rect()
 
     def moving(self):
         if self.entity:
             self.rect.center = (self.entity.rect.center[0], self.entity.rect.center[1]-self.entity.image.get_height())
+        else:
+            match self.side:
+                case 'topleft':
+                    self.rect.topleft = self.position
+                case 'top':
+                    self.rect.top = self.position
+                case 'topright':
+                    self.rect.topright = self.position
+                case 'right':
+                    self.rect.right = self.position
+                case 'bottomright':
+                    self.rect.bottomright = self.position
+                case 'bottom':
+                    self.rect.bottom = self.position
+                case 'bottomleft':
+                    self.rect.bottomleft = self.position
+                case 'left':
+                    self.rect.left = self.position
+                case 'center':
+                    self.rect.center = self.position
+                case _:
+                    self.rect.center = self.position
+    
+    def checkstatus(self):
+        if self.visible:
+            self.image.set_alpha(255)
+            self.rect = self.image.get_rect()
+        else:
+            self.image.set_alpha(0)
+            self.rect = self.image.get_rect()
 
     def update(self):
+        self.checkstatus()
         self.moving()
 
     def __del__(self):
         self.kill()
 
 class Weapon():
+    
     def __init__(self, shooter, selfenemygroup):
         self.damage = 40
         self.range = 600
@@ -299,11 +346,11 @@ class Weapon():
         self.keyswith = {'K_r': True}
         self.mouseswith = {'0': True}
 
-    def attack(self, mouse, mousestate, entitygroup):
+    def attack(self, mouse, mousestate, entitygroup, layerentityupdates):
         if mousestate[0] and self.ammo != 0:
             if self.mouseswith['0']:
                 self.ammo -= 1
-                modules.mymodules.bulletSpawn(mouse=mouse, shooter=self.shooter, damage=self.damage, range=self.range, entitygroup=entitygroup, selfenemygroup=self.targets)
+                modules.mymodules.bulletSpawn(mouse=mouse, shooter=self.shooter, damage=self.damage, range=self.range, entitygroup=entitygroup, selfenemygroup=self.targets, layerentityupdates=layerentityupdates)
             self.mouseswith['0'] = False
         else:
             self.mouseswith['0'] = True
@@ -318,3 +365,29 @@ class Weapon():
         else:
             self.keyswith['K_r'] = True
     
+class Interface():
+
+    def __init__(self, screen):
+        self.healthindicator = Text(position=(1020, 580), side='bottomright')
+        self.staminaindicator = Text(position=(1020, 610), side='bottomright')
+        self.ammoindicator = Text(position=(1020, 640), side='bottomright')
+        self.pauselabel = Text(text='PAUSE', size=72, position=(screen.get_width()//2, screen.get_height()//2), side='center')
+
+    def indicators(self, player):
+        self.healthindicator.textedit(f'Health: {round((player.health/player.maxhealth if player.maxhealth != math.inf else 1)*100)}%', (255, 100, 100))
+        self.staminaindicator.textedit(f'Stamina: {round((player.energy/player.maxenergy if player.maxenergy != math.inf else 1)*100)}%', (255, 255, 100))
+        self.ammoindicator.textedit(f'Ammo: {player.weapon.ammo}/{player.weapon.maxammo}/{player.weapon.ammunition}', (100, 255, 100))
+    
+    def pausescreen(self, screen, paused):
+        if paused:
+            shadeground = pygame.Surface(screen.get_size())
+            shadeground.set_alpha(75)
+            screen.blit(shadeground, shadeground.get_rect())
+            self.pauselabel.visible = True
+
+        else:
+            self.pauselabel.visible = False
+
+    def update(self, screen, mousestate, paused, player):
+        self.indicators(player)
+        self.pausescreen(screen, paused)
