@@ -1,7 +1,7 @@
 
 import pygame
 import math
-from modules import entityClass, textClass
+from modules import entityClass, textClass, shapeClass
 
 class Zombie(entityClass.defaultEntity.Entity):
     instances = set()
@@ -30,6 +30,10 @@ class Zombie(entityClass.defaultEntity.Entity):
         #name binding
         self.name = textClass.defaultText.Text(name, side='center', position=(position[0], position[1]-30))
 
+        #bars binding
+        self.healthbarback = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(192, 192, 192))
+        self.healthbar = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(0, 255, 0))
+
     def movement(self, target, dtime, TARGET_FPS):
         if target:
             #set the movement vector
@@ -56,6 +60,14 @@ class Zombie(entityClass.defaultEntity.Entity):
         #giving to connected text label the position
         self.name.position = (self.rect.center[0], self.rect.center[1]-40)
 
+    def characteristicsBarRender(self):
+        healthratio = self.health / self.maxhealth
+        self.healthbar.sizeedit((round(100*healthratio), 8))
+        self.healthbar.rect = self.healthbarback.image.get_rect()
+
+        self.healthbarback.position = (self.rect.center[0], self.rect.center[1]+30)
+        self.healthbar.position = (self.rect.center[0], self.rect.center[1]+30)
+
     def visible(self):
         #displaying the sprite if not hided
         if self.hided:
@@ -72,9 +84,12 @@ class Zombie(entityClass.defaultEntity.Entity):
         self.healthupdate()
         self.movement(target, dtime, TARGET_FPS)
         self.borders(screen)
+        self.characteristicsBarRender()
         self.namerender()
         self.visible()
 
     def __del__(self):
         self.kill()
         self.name.kill()
+        self.healthbar.kill()
+        self.healthbarback.kill()

@@ -1,17 +1,21 @@
 
 import pygame
+from modules import entityClass
 
 class Entity(pygame.sprite.Sprite):
     instances = set()
     
-    def __init__(self, layer=0, private=None):
+    def __init__(self, size=(10, 10), color=(0, 0, 0), layer=0, privateLayer=entityClass.instances.entityLayer.defaultLayer, privateGroup=entityClass.instances.entityGroup.defaultGroup):
         Entity.instances.add(self)
         super().__init__()
-        private.add(self, layer=layer)
+        if privateLayer:
+            privateLayer.add(self, layer=layer)
+        if privateGroup:
+            self.add(privateGroup)
 
         #creating sprite
-        self.image = pygame.Surface((10, 10))
-        self.image.fill((0, 0, 0))
+        self.image = pygame.Surface(size)
+        self.image.fill(color)
         self.rect = self.image.get_rect()
 
         #render options
