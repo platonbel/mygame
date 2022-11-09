@@ -16,10 +16,11 @@ class Weapon(defaultItem.Item):
         self.mouseswith = {'0': False}
 
     def attack(self, mouse, mousestate, dtime, TARGET_FPS):
-        None
+        if self.picked:
+            None
 
     def update(self, mouse, mousestate, keystate, dtime, TARGET_FPS):
-        self.picking(dtime)
+        self.existChesk()
         self.attack(mouse, mousestate, dtime, TARGET_FPS)
 
         

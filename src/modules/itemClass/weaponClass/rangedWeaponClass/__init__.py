@@ -1,4 +1,3 @@
-from . import bulletClass
 from . import defaultRangedWeapon
 from . import assaultRifleWeapon
 from . import shotgunWeapon

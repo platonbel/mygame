@@ -20,10 +20,7 @@ class Shape(pygame.sprite.Sprite):
         #render options
         self.firstsize = size
         self.firstcolor = color
-        try:
-            self.firstimage = pygame.image.load(image).convert_alpha() if image else None
-        except:
-            self.firstimage = pygame.image.load(image)
+        self.firstimage = pygame.image.load(image).convert_alpha() if image else None
         self.firstalpha = alpha
         self.hided = False
 
@@ -67,8 +64,14 @@ class Shape(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def imageedit(self, image):
-        self.image = pygame.image.load(image).convert_alpha() if image else None
-        self.rect = self.image.get_rect()
+        if image:
+            self.image = pygame.image.load(image).convert_alpha()
+            self.rect = self.image.get_rect()
+        else:
+            self.image = pygame.Surface(self.firstsize)
+            self.image.fill(self.firstcolor)
+            self.image.set_alpha(self.firstalpha)
+            self.rect = self.image.get_rect()
 
     def coloredit(self, color):
         self.image.fill(color)

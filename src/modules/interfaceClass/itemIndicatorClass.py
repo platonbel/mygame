@@ -21,7 +21,8 @@ class Indicator():
             if player.item.itemtype == 'rangedWeapon':
                 ammoratio = player.item.ammo
                 maxammoratio = player.item.maxammo
-                ammunitionratio = player.inventory[player.item.ammunitiontype]
+                key, value = player.inventory.founditem(player.item.ammunitiontype, 'ammunitiontype')
+                ammunitionratio = value.amount if value else 0
                 ammunitiontyperatio = player.item.ammunitiontype + ' к.'
                 if player.item.reloading:
                     reloadratio = player.item.reloaddelay / player.item.reloadtime

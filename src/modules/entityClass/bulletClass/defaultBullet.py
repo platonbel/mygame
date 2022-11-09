@@ -1,14 +1,14 @@
 import pygame
 import math
 import random
-from modules import entityClass
+from modules.entityClass import defaultEntity, instances
 
-class Bullet(entityClass.defaultEntity.Entity):
+class Bullet(defaultEntity.Entity):
 
     def __init__(self, owner, targets, mouse, spreadangle=0, shotrange=0, damage=0, layer=1):
         super().__init__()
-        self.add(entityClass.instances.entityGroup.bulletGroup)
-        entityClass.instances.entityLayer.defaultLayer.add(self, layer=layer)
+        self.add(instances.entityGroup.bulletGroup)
+        instances.entityLayer.defaultLayer.add(self, layer=layer)
         
         #realize here import png sprites
         self.image = pygame.Surface((10, 10))

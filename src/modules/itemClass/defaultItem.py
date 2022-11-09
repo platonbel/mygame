@@ -3,7 +3,7 @@ from modules import shapeClass, interfaceClass
 
 class Item():
     
-    def __init__(self, iconimage=None, pickingtime=0):
+    def __init__(self, iconimage=None, amount=1, pickingtime=0):
         
         if iconimage:
             self.itemicon = iconimage
@@ -12,6 +12,7 @@ class Item():
         
         self.itemtexture = None
 
+        self.amount = amount
         self.pickingtime = pickingtime
         self.pickingdelay = 0
         
@@ -19,7 +20,12 @@ class Item():
 
         self.owner = None
         self.picked = False
-        
+        self.exist = True
+
+    def existChesk(self):
+        if self.amount <= 0:
+            self.__del__()
+
     def picking(self, dtime):
         if not self.picked:
             self.pickingdelay += dtime
@@ -27,6 +33,10 @@ class Item():
                 self.pickingdelay = 0
                 self.picked = True
 
-    def update(self, mouse, mousestate, keystate, dtime, TARGET_FPS):
-        self.picking(dtime)
+    def update(self, mouse=None, mousestate=None, keystate=None, dtime=None, TARGET_FPS=None):
+        self.existChesk()
+
+    def __del__(self):
+        self.exist = False
+
 
