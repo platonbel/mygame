@@ -10,32 +10,27 @@ class Shape(pygame.sprite.Sprite):
         self.add(shapeClass.instances.shapeGroup.defaultGroup)
         shapeClass.instances.shapeLayer.defaultLayer.add(self, layer=layer)
 
-        #set here static position
-        self.position = position
-        self.side = side
-
         #bind headobject
         self.headobject = headobject
 
         #render options
-        self.firstsize = size
-        self.firstcolor = color
-        self.firstimage = pygame.image.load(image).convert_alpha() if image else None
-        self.firstalpha = alpha
-        self.firstalpha
+        self.position = position
+        self.side = side
+        self.size = size
+        self.color = color
+        self.alpha = alpha
         self.hided = False
-
-        #creating sprite
-        if not self.firstimage:
-            self.image = pygame.Surface(self.firstsize)
-            self.image.fill(self.firstcolor)
-            self.image.set_alpha(self.firstalpha)
+        if image:
+            self.image = pygame.image.load(image).convert_alpha()
         else:
-            self.image = self.firstimage
+            self.image = pygame.Surface(self.size)
+            self.image.fill(self.color)
+            self.image.set_alpha(self.alpha)
         self.rect = self.image.get_rect()
+        self.moving(self.position)
 
-    def moving(self):
-        #set position
+    def moving(self, position):
+        self.position = position
         match self.side:
             case 'topleft':
                 self.rect.topleft = self.position
@@ -59,33 +54,31 @@ class Shape(pygame.sprite.Sprite):
                 self.rect.center = self.position
 
     def sizeedit(self, size):
-        #changing the sprite size
-        self.image = pygame.Surface(size)
-        self.image.fill(self.firstcolor)
+        self.size = size
+        self.image = pygame.Surface(self.size)
+        self.image.fill(self.color)
         self.rect = self.image.get_rect()
+        self.moving(self.position)
 
     def imageedit(self, image):
         if image:
             self.image = pygame.image.load(image).convert_alpha()
             self.rect = self.image.get_rect()
-            self.rect.center = self.position
+            self.moving(self.position)
         else:
-            self.image = pygame.Surface(self.firstsize)
-            self.image.fill(self.firstcolor)
-            self.image.set_alpha(self.firstalpha)
+            self.image = pygame.Surface(self.size)
+            self.image.fill(self.color)
+            self.image.set_alpha(self.alpha)
             self.rect = self.image.get_rect()
-            self.rect.center = self.position
+            self.moving(self.position)
 
     def coloredit(self, color):
-        self.image.fill(color)
+        self.color = color
+        self.image.fill(self.color)
 
-    def visible(self):
-        #displaying the sprite if not hided
+    def visible(self, hided):
+        self.hided = hided
         if self.hided:
             self.image.set_alpha(0)
         else:
-            self.image.set_alpha(self.firstalpha)
-
-    def update(self):
-        self.moving()
-        self.visible()
+            self.image.set_alpha(self.alpha)

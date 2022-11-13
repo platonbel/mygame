@@ -19,61 +19,54 @@ class Bullet(defaultEntity.Entity):
         self.hided = False
         self._layer = layer
 
-        #set self and target coordinates
-        self.rect.center = owner.rect.center
-        self.firstplace =  owner.rect.center
+        #characteristics
+        self.owner = owner
+        self.targets = targets
+        self.shotrange = shotrange
+        self.damage = damage
+        self.speed = 20
 
+        #set self and target coordinates
         #spread
         angle = random.randint(-spreadangle//2, spreadangle//2+1)
         rad_alfa = angle * (math.pi/180)
 
-        dxvector = mouse[0] - owner.rect.center[0]
-        dyvector = mouse[1] - owner.rect.center[1]
-        distancestart = math.sqrt(dxvector**2 + dyvector**2)
+        self.position = pygame.math.Vector2(self.owner.rect.center)
+        self.rect.center = self.position
+        self.direction = (pygame.math.Vector2(mouse) - pygame.math.Vector2(self.rect.center)).normalize()
 
-        kxvector = (dxvector / distancestart) if distancestart != 0 else 0
-        kyvector = (dyvector / distancestart) if distancestart != 0 else 0
-
-        kxvector = kxvector * math.cos(rad_alfa) - kyvector * math.sin(rad_alfa)
-        kyvector = kxvector * math.sin(rad_alfa) + kyvector * math.cos(rad_alfa)
-
-        #characteristics
-        self.shooter = owner
-        self.targets = targets
-        if kxvector and kyvector:
-            self.mouse = (kxvector, kyvector)
-        else:
-            a = random.random()
-            self.mouse = (a, 1-a)
-        self.shotrange = shotrange
-        self.damage = damage
-        self.speed = 20
+        self.direction[0] = self.direction[0] * math.cos(rad_alfa) - self.direction[1] * math.sin(rad_alfa)
+        self.direction[1] = self.direction[0] * math.sin(rad_alfa) + self.direction[1] * math.cos(rad_alfa)
+        if self.direction == (0, 0):
+            a = random.random() 
+            self.direction = (a, 1-a)
     
     def movement(self, dtime, TARGET_FPS):
 
-        self.speedx = self.speed * self.mouse[0]
-        self.speedy = self.speed * self.mouse[1]
+        self.speedx = self.speed * self.direction[0]
+        self.speedy = self.speed * self.direction[1]
         self.speedx = math.ceil(self.speedx) if self.speedx > 0 else math.floor(self.speedx)
         self.speedy = math.ceil(self.speedy) if self.speedy > 0 else math.floor(self.speedy)
         
-        self.rect.x += self.speedx * dtime * TARGET_FPS
-        self.rect.y += self.speedy * dtime * TARGET_FPS
+        self.rect.centerx += self.speedx * dtime * TARGET_FPS
+        self.rect.centery += self.speedy * dtime * TARGET_FPS
 
-        dxvector = self.rect.center[0] - self.firstplace[0]
-        dyvector = self.rect.center[1] - self.firstplace[1]
+        dxvector = self.rect.center[0] - self.owner.rect.center[0]
+        dyvector = self.rect.center[1] - self.owner.rect.center[1]
 
-        distancecurrent = math.sqrt(dxvector**2 + dyvector**2)
+        distancecurrent = math.hypot(dxvector, dyvector)
 
-        self.goal(distancecurrent, dtime, TARGET_FPS)
+        self.goal(distancecurrent)
 
-    def goal(self, distancecurrent, dtime, TARGET_FPS):
+    def goal(self, distancecurrent):
         hit = pygame.sprite.spritecollideany(self, self.targets)
         if hit:
             hit.health -= self.damage
-            speedx1 = self.speed * self.mouse[0]
-            speedy1 = self.speed * self.mouse[1]
-            hit.rect.x += speedx1 
-            hit.rect.y += speedy1 
+            speedx = self.speed * self.direction[0]
+            speedy = self.speed * self.direction[1]
+            print(speedx, speedy)
+            hit.position[0] += speedx
+            hit.position[1] += speedy
             self.__del__()
         elif distancecurrent >= self.shotrange:
             self.__del__()

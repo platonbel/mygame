@@ -18,6 +18,7 @@ class Entity(pygame.sprite.Sprite):
         self._layer = layer
 
         #general characteristics
+        self.speed = 0
         self.speedx = 0
         self.speedy = 0
 

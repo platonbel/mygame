@@ -20,28 +20,25 @@ class Player(entityClass.defaultEntity.Entity):
 
         #render options
         self.hided = False
-        self._layer = layer
 
-        #realize here import spawnpoint info 
-        self.rect.center = position
+        #realize here import spawnpoint info
+        self.position = (0, 0)
+        self.rect.center = self.position
 
         #characteristics
         self.health = 100
         self.maxhealth = 100
         self.energy = 100
         self.maxenergy = 100
+        self.speed = 6
 
-        #faction binding
+        #targets binding
         self.enemygroup = entityClass.instances.entityGroup.zombieGroup
 
-        #name binding
-        self.name = textClass.defaultText.Text(name, side='center', position=(position[0], position[1]-30))
-
-        #bars binding
+        #gui binding
+        self.name = textClass.defaultText.Text(text=name, side='center', position=(position[0], position[1]-30))
         self.healthbarback = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(192, 192, 192))
-        self.energybarback = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(192, 192, 192))
         self.healthbar = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(0, 255, 0))
-        self.energybar = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(255, 255, 0))
 
         #game interaction
 
@@ -53,7 +50,7 @@ class Player(entityClass.defaultEntity.Entity):
         self.inventory.inventoryslots['14'].amount = 500
         self.inventory.inventoryslots['12'] = copy.deepcopy(itemClass.instances.ammunitionGroup.items['12/70'])
         self.inventory.inventoryslots['12'].amount = 500
-        self.inventory.inventoryslots['1'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['AK-47'])
+        self.inventory.inventoryslots['1'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['testgun'])
         self.inventory.inventoryslots['2'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['SPAS-12'])
         self.inventory.inventoryslots['3'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['Glock-17'])
         self.inventory.inventoryslots['4'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['AK-47'])
@@ -85,13 +82,13 @@ class Player(entityClass.defaultEntity.Entity):
 
         #moving
         if keystate[pygame.K_w]:
-            self.speedy = -6 * kyvector * sprint
+            self.speedy = -self.speed * kyvector * sprint
         if keystate[pygame.K_a]:
-            self.speedx = -6 * kxvector * sprint
+            self.speedx = -self.speed * kxvector * sprint
         if keystate[pygame.K_s]:
-            self.speedy = 6 * kyvector * sprint
+            self.speedy = self.speed * kyvector * sprint
         if keystate[pygame.K_d]:
-            self.speedx = 6 * kxvector * sprint
+            self.speedx = self.speed * kxvector * sprint
 
         #stopping if no press
         if (not keystate[pygame.K_w]) and (not keystate[pygame.K_s]):
@@ -106,28 +103,20 @@ class Player(entityClass.defaultEntity.Entity):
         self.speedx = math.ceil(self.speedx) if self.speedx > 0 else math.floor(self.speedx)
         self.speedy = math.ceil(self.speedy) if self.speedy > 0 else math.floor(self.speedy)
 
-        self.rect.x += self.speedx * dtime * TARGET_FPS
-        self.rect.y += self.speedy * dtime * TARGET_FPS
+        self.rect.centerx += self.speedx * dtime * TARGET_FPS
+        self.rect.centery += self.speedy * dtime * TARGET_FPS
 
-    def namerender(self):
-        #giving to connected text label the position
-        self.name.position = (self.rect.center[0], self.rect.center[1]-40)
-
-    def characteristicsBarRender(self):
+    def GUIRender(self):
         healthratio = self.health / self.maxhealth
-        energyratio = self.energy / self.maxenergy
         self.healthbar.sizeedit((round(100*healthratio), 8))
         self.healthbar.rect = self.healthbarback.image.get_rect()
-        self.energybar.sizeedit((round(100*energyratio), 8))
-        self.energybar.rect = self.energybarback.image.get_rect()
 
-        self.healthbarback.position = (self.rect.center[0], self.rect.center[1]+30)
-        self.energybarback.position = (self.rect.center[0], self.rect.center[1]+43)
-        self.healthbar.position = (self.rect.center[0], self.rect.center[1]+30)
-        self.energybar.position = (self.rect.center[0], self.rect.center[1]+43)
+        self.name.moving((self.rect.center[0], self.rect.center[1]-40))
+        self.healthbarback.moving((self.rect.center[0], self.rect.center[1]+30))
+        self.healthbar.moving((self.rect.center[0], self.rect.center[1]+30))
 
-    def visible(self):
-        #displaying the sprite if not hided
+    def visible(self, hided):
+        self.hided = hided
         if self.hided:
             self.image.set_alpha(0)
         else:
@@ -154,9 +143,7 @@ class Player(entityClass.defaultEntity.Entity):
         self.inventoryRender(keystate)
         self.itemInteraction(mouse, mousestate, keystate, dtime, TARGET_FPS)
         self.borders(screen)
-        self.characteristicsBarRender()
-        self.namerender()
-        self.visible()
+        self.GUIRender()
 
     def __del__(self):
         self.kill()

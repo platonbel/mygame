@@ -15,6 +15,10 @@ class Indicator():
         self.ammunitionvalue = textClass.privateText.Text(headobject=self.itemIndicator, size=36, side='center', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)
         self.ammunitiontypevalue = textClass.privateText.Text(headobject=self.itemIndicator, size=36, side='center', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)
     
+        self.ammovalue.moving((self.ammovalue.headobject.rect.topleft[0]+332, self.ammovalue.headobject.rect.topleft[1]+52))
+        self.ammunitionvalue.moving((self.ammovalue.headobject.rect.topleft[0]+228, self.ammovalue.headobject.rect.topleft[1]+78))
+        self.ammunitiontypevalue.moving((self.ammovalue.headobject.rect.topleft[0]+228, self.ammovalue.headobject.rect.topleft[1]+26))
+
     def indicatorrender(self, player):
         if player.item != None:
 
@@ -38,10 +42,6 @@ class Indicator():
                 
             self.hided = False
 
-            self.ammovalue.position = (self.ammovalue.headobject.rect.topleft[0]+332, self.ammovalue.headobject.rect.topleft[1]+52)
-            self.ammunitionvalue.position = (self.ammovalue.headobject.rect.topleft[0]+228, self.ammovalue.headobject.rect.topleft[1]+78)
-            self.ammunitiontypevalue.position = (self.ammovalue.headobject.rect.topleft[0]+228, self.ammovalue.headobject.rect.topleft[1]+26)
-
             self.ammunitionvalue.textedit(f'{ammunitionratio}', color=(225, 225, 255))
             self.ammunitiontypevalue.textedit(f'{ammunitiontyperatio}', color=(225, 225, 255))
             self.ammovalue.textedit(f'{ammoratio}/{maxammoratio}', color=(225, 225, 255))
@@ -53,8 +53,8 @@ class Indicator():
             ammunitiontyperatio = None
             self.hided = True
 
-        self.itemIndicator.hided = self.hided
-        self.ammovalue.hided = self.hided
-        self.ammunitionvalue.hided = self.hided
-        self.ammunitiontypevalue.hided = self.hided
+        self.itemIndicator.visible(self.hided)
+        self.ammovalue.visible(self.hided)
+        self.ammunitionvalue.visible(self.hided)
+        self.ammunitiontypevalue.visible(self.hided)
 

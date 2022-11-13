@@ -7,7 +7,7 @@ class Cursor():
         pygame.mouse.set_visible(False)
 
     def cursorrender(self, mouse, mousestate):
-        self.cursor.position =  mouse
+        self.cursor.moving(mouse)
         if mousestate[0]:
             self.cursor.imageedit("src/assets/textures/cursor_1.png")
         else:

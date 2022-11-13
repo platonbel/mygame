@@ -1,7 +1,7 @@
 
 import pygame
 import math
-from modules import functions, entityClass, textClass, shapeClass
+from modules import entityClass, textClass, shapeClass, functions
 
 class Zombie(entityClass.defaultEntity.Entity):
     instances = set()
@@ -18,69 +18,60 @@ class Zombie(entityClass.defaultEntity.Entity):
         self.rect = self.image.get_rect()
 
         #render options
+        self.position = pygame.math.Vector2(position)
         self.hided = False
-        self._layer = layer
-        #realize here import spawnpoint info 
         self.rect.center = position
 
         #characteristics
         self.health = 200
         self.maxhealth = 200
+        self.speed = 6
 
-        #name binding
-        self.name = textClass.defaultText.Text(name, side='center', position=(position[0], position[1]-30))
-
-        #target binding
+        #targets binding
+        self.targets = entityClass.instances.entityGroup.playerGroup
         self.target = None
 
-        #bars binding
+        #gui binding
+        self.name = textClass.defaultText.Text(text=name, side='center', position=(position[0], position[1]-30))
         self.healthbarback = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(192, 192, 192))
         self.healthbar = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(0, 255, 0))
 
     def movement(self, dtime, TARGET_FPS):
         if self.target:
-            #set the movement vector
-            dxvector = self.target.rect.x - self.rect.x
-            dyvector = self.target.rect.y - self.rect.y
-            movementvector = math.sqrt(dxvector **2 + dyvector**2)
-            kxvector = (dxvector / movementvector) if movementvector != 0 else 0
-            kyvector = (dyvector / movementvector) if movementvector != 0 else 0
-            
-            #set the speed 
-            self.speedx = (6 if abs(dxvector) >= 6 else 1) * kxvector
-            self.speedy = (6 if abs(dyvector) >= 6 else 1) * kyvector
-            self.speedx = math.ceil(self.speedx) if self.speedx > 0 else math.floor(self.speedx)
-            self.speedy = math.ceil(self.speedy) if self.speedy > 0 else math.floor(self.speedy)
+            distance = pygame.math.Vector2(self.target.rect.center) - pygame.math.Vector2(self.rect.center)
+            if distance:
+                direction = distance.normalize()
+                self.speedx = (self.speed * direction[0]) if abs(distance[0]) >= self.speed else 1 * direction[0]
+                self.speedy = (self.speed * direction[1]) if abs(distance[1]) >= self.speed else 1 * direction[1]
+                self.speedx = math.ceil(self.speedx) if self.speedx > 0 else math.floor(self.speedx)
+                self.speedy = math.ceil(self.speedy) if self.speedy > 0 else math.floor(self.speedy)
+                self.position[0] += self.speedx
+                self.position[1] += self.speedy
+            self.rect.center = (round(self.position[0]), round(self.position[1]))
         else:
             #realise here random moving system
             self.speedx, self.speedy = 0, 0
+            self.rect.center = (round(self.position[0]), round(self.position[1]))
 
-        #stopping if no press
-        self.rect.x += self.speedx * dtime * TARGET_FPS
-        self.rect.y += self.speedy * dtime * TARGET_FPS
-
-    def targetdetect(self, targets):
-        for target in targets:
-            if functions.distanceСalculation(self, target) <= 600:
+    def targetdetect(self):
+        for target in self.targets:
+            if functions.distanceСalculation(self, target) <= 400:
                 if not self.target:
                     self.target = target
             else:
                 self.target = None
 
-    def namerender(self):
-        #giving to connected text label the position
-        self.name.position = (self.rect.center[0], self.rect.center[1]-40)
-
-    def characteristicsBarRender(self):
+    def GUIRender(self):
         healthratio = self.health / self.maxhealth
         self.healthbar.sizeedit((round(100*healthratio), 8))
         self.healthbar.rect = self.healthbarback.image.get_rect()
 
-        self.healthbarback.position = (self.rect.center[0], self.rect.center[1]+30)
-        self.healthbar.position = (self.rect.center[0], self.rect.center[1]+30)
+        self.name.moving((self.rect.center[0], self.rect.center[1]-40))
+        self.healthbarback.moving((self.rect.center[0], self.rect.center[1]+30))
+        self.healthbar.moving((self.rect.center[0], self.rect.center[1]+30))
 
-    def visible(self):
-        #displaying the sprite if not hided
+    def visible(self, hided):
+        self.hided = hided
         if self.hided:
             self.image.set_alpha(0)
         else:
@@ -91,14 +82,12 @@ class Zombie(entityClass.defaultEntity.Entity):
             self.health = 0
             self.__del__()
 
-    def update(self, targets, screen, dtime, TARGET_FPS):
+    def update(self, screen, dtime, TARGET_FPS):
         self.healthupdate()
         self.movement(dtime, TARGET_FPS)
-        self.targetdetect(targets)
+        self.targetdetect()
         self.borders(screen)
-        self.characteristicsBarRender()
-        self.namerender()
-        self.visible()
+        self.GUIRender()
 
     def __del__(self):
         self.kill()

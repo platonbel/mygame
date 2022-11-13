@@ -1,5 +1,6 @@
 from . import instances
 from . import defaultInterface
+from . import defaultIcon
 from . import statIndicatorClass
 from . import itemIndicatorClass
 from . import inventoryClass

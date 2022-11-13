@@ -9,36 +9,32 @@ class Text(pygame.sprite.Sprite):
         super().__init__()
         self.add(textClass.instances.textGroup.defaultGroup)
         privateLayer.add(self, layer=layer)
-            
-        #creating text label
-        self.font = pygame.font.SysFont('neo sans pro', size)
-        self.image = self.font.render(text, True, color)
-        self.rect = self.image.get_rect()
-
-        #set here static position
-        self.position = position
-        self.side = side
 
         #bind headobject
         self.headobject = headobject
 
         #render options
-        self.firsttext = text
-        self.currenttext = text
-        self.firstsize = size
-        self.currentsize = size
-        self.firstcolor = color
-        self.currentcolor = color
+        self.position = position
+        self.side = side
+        self.text = text
+        self.size = size
+        self.color = color
+        self.alpha = 255
         self.hided = False
-    
-    def textedit(self, text, color):
-        self.currenttext = text
-        self.currentcolor = color
-        self.image = self.font.render(self.currenttext, True, self.currentcolor)
+        self.font = pygame.font.SysFont('neo sans pro', self.size)
+        self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
+        self.moving(self.position)
 
-    def moving(self):
-        #set position
+    def textedit(self, text, color):
+        self.text = text
+        self.color = color
+        self.image = self.font.render(self.text, True, self.color)
+        self.rect = self.image.get_rect()
+        self.moving(self.position)
+
+    def moving(self, position):
+        self.position = position
         match self.side:
             case 'topleft':
                 self.rect.topleft = self.position
@@ -61,16 +57,9 @@ class Text(pygame.sprite.Sprite):
             case _:
                 self.rect.center = self.position
         
-    def visible(self):
-        #displaying the sprite if not hided
+    def visible(self, hided):
+        self.hided = hided
         if self.hided:
             self.image.set_alpha(0)
         else:
-            self.image.set_alpha(255)
-
-    def update(self):
-        self.visible()
-        self.moving()
-
-    def __del__(self):
-        self.kill()
+            self.image.set_alpha(self.alpha)

@@ -13,71 +13,30 @@ class Inventory():
 
         self.inventoryslots = {
 
-            '1': (shapeClass.privateShape.Shape(position=(82, screen.get_height()-82), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '2': (shapeClass.privateShape.Shape(position=(186, screen.get_height()-82), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '3': (shapeClass.privateShape.Shape(position=(290, screen.get_height()-82), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '4': (shapeClass.privateShape.Shape(position=(394, screen.get_height()-82), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '5': (shapeClass.privateShape.Shape(position=(498, screen.get_height()-82), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer),
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
+            '1': interfaceClass.defaultIcon.Icon(position=(82, screen.get_height()-82)),
+            '2': interfaceClass.defaultIcon.Icon(position=(186, screen.get_height()-82)),
+            '3': interfaceClass.defaultIcon.Icon(position=(290, screen.get_height()-82)),
+            '4': interfaceClass.defaultIcon.Icon(position=(394, screen.get_height()-82)),
+            '5': interfaceClass.defaultIcon.Icon(position=(498, screen.get_height()-82)),
+            '6': interfaceClass.defaultIcon.Icon(position=(82, screen.get_height()-426)),
+            '7': interfaceClass.defaultIcon.Icon(position=(186, screen.get_height()-426)),
+            '8': interfaceClass.defaultIcon.Icon(position=(290, screen.get_height()-426)),
+            '9': interfaceClass.defaultIcon.Icon(position=(394, screen.get_height()-426)),
+            '10': interfaceClass.defaultIcon.Icon(position=(498, screen.get_height()-426)),
+            '11': interfaceClass.defaultIcon.Icon(position=(82, screen.get_height()-322)),
+            '12': interfaceClass.defaultIcon.Icon(position=(186, screen.get_height()-322)),
+            '13': interfaceClass.defaultIcon.Icon(position=(290, screen.get_height()-322)),
+            '14': interfaceClass.defaultIcon.Icon(position=(394, screen.get_height()-322)),
+            '15': interfaceClass.defaultIcon.Icon(position=(498, screen.get_height()-322)),
+            '16': interfaceClass.defaultIcon.Icon(position=(82, screen.get_height()-218)),
+            '17': interfaceClass.defaultIcon.Icon(position=(186, screen.get_height()-218)),
+            '18': interfaceClass.defaultIcon.Icon(position=(290, screen.get_height()-218)),
+            '19': interfaceClass.defaultIcon.Icon(position=(394, screen.get_height()-218)),
+            '20': interfaceClass.defaultIcon.Icon(position=(498, screen.get_height()-218)),
 
-            '6': (shapeClass.privateShape.Shape(position=(82, screen.get_height()-426), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '7': (shapeClass.privateShape.Shape(position=(186, screen.get_height()-426), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '8': (shapeClass.privateShape.Shape(position=(290, screen.get_height()-426), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '9': (shapeClass.privateShape.Shape(position=(394, screen.get_height()-426), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '10': (shapeClass.privateShape.Shape(position=(498, screen.get_height()-426), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer),
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-        
-            '11': (shapeClass.privateShape.Shape(position=(82, screen.get_height()-322), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '12': (shapeClass.privateShape.Shape(position=(186, screen.get_height()-322), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '13': (shapeClass.privateShape.Shape(position=(290, screen.get_height()-322), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '14': (shapeClass.privateShape.Shape(position=(394, screen.get_height()-322),side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '15': (shapeClass.privateShape.Shape(position=(498, screen.get_height()-322), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '16': (shapeClass.privateShape.Shape(position=(82, screen.get_height()-218), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer),
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)), 
-
-            '17': (shapeClass.privateShape.Shape(position=(186, screen.get_height()-218), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer),
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-
-            '18': (shapeClass.privateShape.Shape(position=(290, screen.get_height()-218), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '19': (shapeClass.privateShape.Shape(position=(394, screen.get_height()-218), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
-            '20': (shapeClass.privateShape.Shape(position=(498, screen.get_height()-218), side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer)),
-            
         }
         
-        self.tempitemslot = (shapeClass.privateShape.Shape(side='center', layer=2, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer), 
-            textClass.privateText.Text(side = 'bottomright', layer=3, privateLayer=interfaceClass.instances.interfaceLayer.defaultLayer))
-
+        self.tempitemslot = interfaceClass.defaultIcon.Icon()
 
         self.prevslot = None
         self.mouseswith = {'0': False, '1': False, '2': False}
@@ -87,59 +46,22 @@ class Inventory():
             if player.inventory.opened:
                 for key, value in player.inventory.inventoryslots.items():
                     if key:
-                        if value:
-                            self.inventoryslots[key][0].imageedit(value.itemicon)
-                            self.inventoryslots[key][1].position = (self.inventoryslots[key][0].position[0]+32, self.inventoryslots[key][0].position[1]+32)
-
-                            match value.itemtype:
-                                case 'ammunition':
-                                    self.inventoryslots[key][1].textedit(str(value.amount), (0, 0, 0))
-                                case _:
-                                    self.inventoryslots[key][1].textedit(None, (0, 0, 0))  
-                        else:
-                            self.inventoryslots[key][0].imageedit("src/assets/textures/empty_icon.png")
-                            self.inventoryslots[key][1].textedit(None, (0, 0, 0))
-                
-                if player.inventory.tempitemslot:
-                    self.tempitemslot[0].imageedit(player.inventory.tempitemslot.itemicon)
-                    match player.inventory.tempitemslot.itemtype:
-                        case 'ammunition':
-                            self.tempitemslot[1].textedit(str(player.inventory.tempitemslot.amount), (0, 0, 0))
-                        case _:
-                            self.tempitemslot[1].textedit(None, (0, 0, 0))
-                    self.tempitemslot[0].position = self.inventoryslots[self.prevslot][0].position
-                    self.tempitemslot[1].position = (self.tempitemslot[0].position[0]+32, self.tempitemslot[0].position[1]+32)
-                else:
-                    self.tempitemslot[0].imageedit("src/assets/textures/empty_icon.png")
-                    self.tempitemslot[1].textedit(None, (0, 0, 0))
+                        self.inventoryslots[key].iconRender(value)
+                self.tempitemslot.iconRender(player.inventory.tempitemslot)
                 self.inventoryhided = False
             else:
                 for key, value in player.inventory.inventoryslots.items():
-                    if key:
-                        if key in ['1', '2', '3', '4', '5']:
-                            if value:
-                                self.inventoryslots[key][0].imageedit(value.itemicon)
-                                self.inventoryslots[key][1].position = (self.inventoryslots[key][0].position[0]+32, self.inventoryslots[key][0].position[1]+32)
-
-                                match value.itemtype:
-                                    case 'ammunition':
-                                        self.inventoryslots[key][1].textedit(str(value.amount), (0, 0, 0))
-                                    case _:
-                                        self.inventoryslots[key][1].textedit(None, (0, 0, 0))  
-                            else:
-                                self.inventoryslots[key][0].imageedit("src/assets/textures/empty_icon.png")
-                                self.inventoryslots[key][1].textedit(None, (0, 0, 0))
-                        else:
-                            break
+                    if key in ['1', '2', '3', '4', '5']:
+                        self.inventoryslots[key].iconRender(value)
+                self.tempitemslot.iconRender(None)
                 self.inventoryhided = True
         else:
             self.inventoryhided = True
 
-        self.inventorySlotsBackground_image.hided = self.inventoryhided
-        self.inventorySlots_image.hided = self.inventoryhided
+        self.inventorySlotsBackground_image.visible(self.inventoryhided)
+        self.inventorySlots_image.visible(self.inventoryhided)
         for key, value in self.inventoryslots.items():
-            self.inventoryslots[key][0].hided = self.inventoryhided
-            self.inventoryslots[key][1].hided = self.inventoryhided
+            self.inventoryslots[key].visible(self.inventoryhided)
 
     def quickAccesBarRender(self, player):
         if player:
@@ -160,23 +82,21 @@ class Inventory():
         else:
             self.quickaccesbarhided = True
         
-        self.quickAccesBar.hided = self.quickaccesbarhided
+        self.quickAccesBar.visible(self.quickaccesbarhided)
         for key, value in self.inventoryslots.items():
             if key in ['1', '2', '3', '4', '5']:
                 if value:
-                    self.inventoryslots[key][0].hided = self.quickaccesbarhided
-                    self.inventoryslots[key][1].hided = self.quickaccesbarhided
+                    self.inventoryslots[key].visible(self.quickaccesbarhided)
 
     def holdedItemRender(self, mouse, mousestate, paused, player):
         #сделать возвышение слоя текущего предмета над другими
         if not paused:
-
-            if not self.inventoryhided:
+            if player.inventory.opened:
                 if mousestate[0]:
                     if not self.mouseswith['0']:
                         if not player.inventory.tempitemslot:
                             for key, value in self.inventoryslots.items():
-                                if value[0].rect.collidepoint(mouse):
+                                if value.itemicon.rect.collidepoint(mouse):
                                     self.prevslot = key
                                     player.inventory.tempitemslot = player.inventory.inventoryslots[self.prevslot]
                                     player.inventory.inventoryslots[self.prevslot] = None
@@ -185,12 +105,11 @@ class Inventory():
                     if not self.mouseswith['0']:
                         if player.inventory.tempitemslot:
                             for key, value in self.inventoryslots.items():
-                                if value[0].rect.collidepoint(mouse):
+                                if value.itemicon.rect.collidepoint(mouse):
                                     if self.prevslot != key:
                                         player.inventory.inventoryslots[key], player.inventory.tempitemslot = player.inventory.tempitemslot, player.inventory.inventoryslots[key]
-                                        self.tempitemslot[0].imageedit(player.inventory.tempitemslot.itemicon if player.inventory.tempitemslot else "src/assets/textures/empty_icon.png") 
-                                        self.tempitemslot[0].position = mouse
-                                        self.tempitemslot[1].position = (self.tempitemslot[0].position[0]+32, self.tempitemslot[0].position[1]+32)
+                                        self.tempitemslot.iconRender(player.inventory.tempitemslot)
+                                        self.tempitemslot.moving(mouse)
                                         break
                             else:
                                 player.inventory.inventoryslots[self.prevslot], player.inventory.tempitemslot = player.inventory.tempitemslot, player.inventory.inventoryslots[self.prevslot]
@@ -198,8 +117,7 @@ class Inventory():
                 else:
                     self.mouseswith['0'] = False
                 if player.inventory.tempitemslot:
-                        self.tempitemslot[0].position = mouse
-                        self.tempitemslot[1].position = (self.tempitemslot[0].position[0]+32, self.tempitemslot[0].position[1]+32)
+                        self.tempitemslot.moving(mouse)
             else:
                 if player.inventory.tempitemslot:
                     player.inventory.inventoryslots[self.prevslot] = player.inventory.tempitemslot
