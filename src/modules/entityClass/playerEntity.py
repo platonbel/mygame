@@ -1,6 +1,7 @@
 
 import pygame
 import math
+import copy
 from modules import entityClass, textClass, itemClass, shapeClass, interfaceClass, inventoryClass
 
 class Player(entityClass.defaultEntity.Entity):
@@ -43,22 +44,19 @@ class Player(entityClass.defaultEntity.Entity):
         self.energybar = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(255, 255, 0))
 
         #game interaction
-        #self.inventory = {
-        #   'default': 0, '7.62': 150, '12/70': 40, '9x18': 85
-        #}
-        self.inventory = inventoryClass.defaultInventory.Inventory()
-        self.quickAccesBar = inventoryClass.defaultQuickAccesBar.QuickAccesBar()
 
-        self.inventory.inventoryslots['4'] = itemClass.instances.rangedWeaponGroup.items['AK-47']
-        self.inventory.inventoryslots['9'] = itemClass.instances.rangedWeaponGroup.items['AK-47']
-        self.inventory.inventoryslots['13'] = itemClass.instances.rangedWeaponGroup.items['AK-47']
-        self.inventory.inventoryslots['14'] = itemClass.instances.ammunitionGroup.items['7.62']
+        self.inventory = inventoryClass.defaultInventory.Inventory()
+
+        self.inventory.inventoryslots['9'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['AK-47'])
+        self.inventory.inventoryslots['13'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['AK-47'])
+        self.inventory.inventoryslots['14'] = copy.deepcopy(itemClass.instances.ammunitionGroup.items['7.62'])
         self.inventory.inventoryslots['14'].amount = 500
-        self.inventory.inventoryslots['12'] = itemClass.instances.ammunitionGroup.items['12/70']
+        self.inventory.inventoryslots['12'] = copy.deepcopy(itemClass.instances.ammunitionGroup.items['12/70'])
         self.inventory.inventoryslots['12'].amount = 500
-        self.quickAccesBar.barslots['1'] = itemClass.instances.rangedWeaponGroup.items['AK-47']
-        self.quickAccesBar.barslots['2'] = itemClass.instances.rangedWeaponGroup.items['SPAS-12']
-        self.quickAccesBar.barslots['3'] = itemClass.instances.rangedWeaponGroup.items['Glock-17']
+        self.inventory.inventoryslots['1'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['AK-47'])
+        self.inventory.inventoryslots['2'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['SPAS-12'])
+        self.inventory.inventoryslots['3'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['Glock-17'])
+        self.inventory.inventoryslots['4'] = copy.deepcopy(itemClass.instances.rangedWeaponGroup.items['AK-47'])
 
         self.item = None
 
@@ -136,15 +134,19 @@ class Player(entityClass.defaultEntity.Entity):
             self.image.set_alpha(255)
 
     def quickAccesBarRender(self,  keystate, dtime):
-        self.quickAccesBar.quickAccesBarRender(keystate, dtime, self)#!!!!!!!!!!
-        self.item = self.quickAccesBar.currentitem
+        self.inventory.quickAccesBarRender(keystate, dtime, self)#!!!!!!!!!!
+        self.item = self.inventory.currentitem
 
     def inventoryRender(self, keystate):
         self.inventory.inventoryRender(keystate)#!!!!!!!!!!!!!!
 
     def itemInteraction(self, mouse, mousestate, keystate, dtime, TARGET_FPS):
         if self.item != None:
-            self.item.update(mouse, mousestate, keystate, dtime, TARGET_FPS)#!!!!!!!!
+            match self.item.itemtype:
+                case 'rangedWeapon':
+                    self.item.update(mouse, mousestate, keystate, dtime, TARGET_FPS)#!!!!!!!!
+                case 'ammunition':
+                    self.item.update(dtime)
             
     def update(self, mouse, mousestate, keystate, screen, dtime, TARGET_FPS):
         self.movement(keystate, dtime, TARGET_FPS)

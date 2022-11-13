@@ -1,7 +1,7 @@
 
 import pygame
 import math
-from modules import entityClass, textClass, shapeClass
+from modules import functions, entityClass, textClass, shapeClass
 
 class Zombie(entityClass.defaultEntity.Entity):
     instances = set()
@@ -30,15 +30,18 @@ class Zombie(entityClass.defaultEntity.Entity):
         #name binding
         self.name = textClass.defaultText.Text(name, side='center', position=(position[0], position[1]-30))
 
+        #target binding
+        self.target = None
+
         #bars binding
         self.healthbarback = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(192, 192, 192))
         self.healthbar = shapeClass.defaultShape.Shape(size=(100, 8), side='center', color=(0, 255, 0))
 
-    def movement(self, target, dtime, TARGET_FPS):
-        if target:
+    def movement(self, dtime, TARGET_FPS):
+        if self.target:
             #set the movement vector
-            dxvector = target.rect.x - self.rect.x
-            dyvector = target.rect.y - self.rect.y
+            dxvector = self.target.rect.x - self.rect.x
+            dyvector = self.target.rect.y - self.rect.y
             movementvector = math.sqrt(dxvector **2 + dyvector**2)
             kxvector = (dxvector / movementvector) if movementvector != 0 else 0
             kyvector = (dyvector / movementvector) if movementvector != 0 else 0
@@ -55,6 +58,14 @@ class Zombie(entityClass.defaultEntity.Entity):
         #stopping if no press
         self.rect.x += self.speedx * dtime * TARGET_FPS
         self.rect.y += self.speedy * dtime * TARGET_FPS
+
+    def targetdetect(self, targets):
+        for target in targets:
+            if functions.distanceСalculation(self, target) <= 600:
+                if not self.target:
+                    self.target = target
+            else:
+                self.target = None
 
     def namerender(self):
         #giving to connected text label the position
@@ -80,9 +91,10 @@ class Zombie(entityClass.defaultEntity.Entity):
             self.health = 0
             self.__del__()
 
-    def update(self, target, screen, dtime, TARGET_FPS):
+    def update(self, targets, screen, dtime, TARGET_FPS):
         self.healthupdate()
-        self.movement(target, dtime, TARGET_FPS)
+        self.movement(dtime, TARGET_FPS)
+        self.targetdetect(targets)
         self.borders(screen)
         self.characteristicsBarRender()
         self.namerender()

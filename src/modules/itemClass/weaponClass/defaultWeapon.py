@@ -4,10 +4,8 @@ from modules.itemClass import defaultItem
 
 class Weapon(defaultItem.Item):
     
-    def __init__(self, iconimage, pickingtime, damage):
+    def __init__(self, iconimage, pickingtime):
         super().__init__(iconimage=iconimage, pickingtime=pickingtime)
-
-        self.damage = damage
 
         self.itemtype = 'defaultWeapon'
         self.weapontype = 'default'

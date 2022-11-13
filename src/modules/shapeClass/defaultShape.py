@@ -68,11 +68,13 @@ class Shape(pygame.sprite.Sprite):
         if image:
             self.image = pygame.image.load(image).convert_alpha()
             self.rect = self.image.get_rect()
+            self.rect.center = self.position
         else:
             self.image = pygame.Surface(self.firstsize)
             self.image.fill(self.firstcolor)
             self.image.set_alpha(self.firstalpha)
             self.rect = self.image.get_rect()
+            self.rect.center = self.position
 
     def coloredit(self, color):
         self.image.fill(color)

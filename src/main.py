@@ -20,7 +20,7 @@ def main():
     
     running = True
     paused = False
-
+    fpsrender = modules.textClass.defaultText.Text(position=(200, 200))
     player = modules.entityClass.playerEntity.Player(name='Player')
     zombie = modules.entityClass.zombieEntity.Zombie(name='Zombie')
 
@@ -39,15 +39,18 @@ def main():
         clock.tick(FPS)
         dtime = 1/FPS
         screen.fill((255, 255, 255))
+        fpsrender.textedit(str(clock), (0, 0, 0))
 
         interface.update(mouse, mousestate, keystate, paused, player)
         if not paused:
             modules.entityClass.instances.entityGroup.playerGroup.update(mouse, mousestate, keystate, screen, dtime, TARGET_FPS)
-            modules.entityClass.instances.entityGroup.zombieGroup.update(player, screen, dtime, TARGET_FPS)
+            modules.entityClass.instances.entityGroup.zombieGroup.update(modules.entityClass.instances.entityGroup.playerGroup, screen, dtime, TARGET_FPS)
             modules.entityClass.instances.entityGroup.bulletGroup.update(dtime, TARGET_FPS)
         modules.shapeClass.instances.shapeGroup.defaultGroup.update()
         modules.textClass.instances.textGroup.defaultGroup.update()
 
+
+        modules.backgroundClass.instances.backgroundLayer.defaultLayer.draw(screen)
         modules.entityClass.instances.entityLayer.defaultLayer.draw(screen)
         modules.shapeClass.instances.shapeLayer.defaultLayer.draw(screen)
         modules.textClass.instances.textLayer.defaultLayer.draw(screen)

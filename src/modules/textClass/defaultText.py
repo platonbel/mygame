@@ -26,7 +26,9 @@ class Text(pygame.sprite.Sprite):
         self.hided = False
     
     def textedit(self, text, color):
-        self.image = self.font.render(text, True, color)
+        self.currenttext = text
+        self.currentcolor = color
+        self.image = self.font.render(self.currenttext, True, self.currentcolor)
         self.rect = self.image.get_rect()
 
     def moving(self):

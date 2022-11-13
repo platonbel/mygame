@@ -1,6 +1,7 @@
 import pygame
 
 from modules.itemClass import defaultItem
+from modules.entityClass import bulletClass
 
 class Ammunition(defaultItem.Item):
     
@@ -9,6 +10,10 @@ class Ammunition(defaultItem.Item):
 
         self.itemtype = 'ammunition'
         self.ammunitiontype = ammunitiontype
+
+    def use(self, owner, targets, mouse, spreadangle, shotrange, damage, bulletamount):
+        for i in range(bulletamount):
+            bulletClass.defaultBullet.Bullet(owner=owner, targets=targets, mouse=mouse, spreadangle=spreadangle, shotrange=shotrange, damage=damage)
 
     def update(self, dtime):
         self.existChesk()
