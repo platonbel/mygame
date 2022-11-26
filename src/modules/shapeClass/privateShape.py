@@ -59,18 +59,21 @@ class Shape(pygame.sprite.Sprite):
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
         self.moving(self.position)
+        self.visible(self.hided)
 
     def imageedit(self, image):
         if image:
             self.image = pygame.image.load(image).convert_alpha()
             self.rect = self.image.get_rect()
             self.moving(self.position)
+            self.visible(self.hided)
         else:
             self.image = pygame.Surface(self.size)
             self.image.fill(self.color)
             self.image.set_alpha(self.alpha)
             self.rect = self.image.get_rect()
             self.moving(self.position)
+            self.visible(self.hided)
 
     def coloredit(self, color):
         self.color = color

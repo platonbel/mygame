@@ -64,7 +64,6 @@ class Bullet(defaultEntity.Entity):
             hit.health -= self.damage
             speedx = self.speed * self.direction[0]
             speedy = self.speed * self.direction[1]
-            print(speedx, speedy)
             hit.position[0] += speedx
             hit.position[1] += speedy
             self.__del__()

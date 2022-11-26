@@ -1,6 +1,7 @@
 
 import pygame
 import modules
+import math, random
 
 def main():
 
@@ -24,14 +25,14 @@ def main():
     background = modules.backgroundClass.defaultBackground.Background(screen)
     pygame.display.set_caption("Beliakov Platon")
     
-    running = True
+    running = True  
     paused = False
     fpsrender = modules.textClass.defaultText.Text(position=(200, 200))
     player = modules.entityClass.playerEntity.Player(name='Player')
     zombie = modules.entityClass.zombieEntity.Zombie(name='Zombie')
 
-#    for i in range(600):
-#        modules.shapeClass.defaultShape.Shape(image="src/assets/textures/ak-47_icon.png")
+    #for i in range(1000):
+    #    modules.shapeClass.defaultShape.Shape(position=(random.randint(0, 1920), random.randint(0, 1080)),image="src/assets/textures/ak-47_icon.png")
 
     while running:
 
@@ -46,11 +47,11 @@ def main():
                     paused = not paused
 
         clock.tick(FPS)
-        dtime = 1/FPS
+        dtime = 1/FPS  
         screen.fill((255, 255, 255))
         fpsrender.textedit(str(clock), (0, 0, 0))
 
-        interface.update(mouse, mousestate, keystate, paused, player)
+        interface.update(screen, mouse, mousestate, keystate, paused, player)
         background.update(screen)
         if not paused:
             modules.entityClass.instances.entityGroup.playerGroup.update(mouse, mousestate, keystate, screen, dtime, TARGET_FPS)

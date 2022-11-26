@@ -1,5 +1,7 @@
 import pygame
-from modules import interfaceClass, shapeClass, textClass
+import copy
+import math
+from modules import interfaceClass, shapeClass, textClass, functions
 
 class Inventory():
 
@@ -38,91 +40,149 @@ class Inventory():
         
         self.tempitemslot = interfaceClass.defaultIcon.Icon()
 
-        self.prevslot = None
-        self.mouseswith = {'0': False, '1': False, '2': False}
+        self.mouseswitch = {'0': False, '1': False, '2': False}
+        self.keyswitch = {'K_LSHIFT': False}
 
     def inventoryRender(self, player):
-        if player:
-            if player.inventory.opened:
-                for key, value in player.inventory.inventoryslots.items():
-                    if key:
-                        self.inventoryslots[key].iconRender(value)
-                self.tempitemslot.iconRender(player.inventory.tempitemslot)
-                self.inventoryhided = False
-            else:
-                for key, value in player.inventory.inventoryslots.items():
-                    if key in ['1', '2', '3', '4', '5']:
-                        self.inventoryslots[key].iconRender(value)
-                self.tempitemslot.iconRender(None)
-                self.inventoryhided = True
-        else:
-            self.inventoryhided = True
+        #render item icons for slots in inventory
+        self.inventoryhided = False if player.inventory.opened else True
+        self.quickaccesbarhided = False if not player.inventory.opened else True
+        for key, value in player.inventory.inventoryslots.items():
+            if key:
+                self.inventoryslots[key].iconRender(value)
+                if key in ['1', '2', '3', '4', '5']:
+                    self.inventoryslots[key].visible(not(self.inventoryhided or self.quickaccesbarhided))
+                else:
+                    self.inventoryslots[key].visible(self.inventoryhided)
+        #render quickbar texture
+        match player.inventory.currentslot:
+            case '1':
+                self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_1.png")
+            case '2':
+                self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_2.png")
+            case '3':
+                self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_3.png")
+            case '4':
+                self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_4.png")
+            case '5':
+                self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_5.png")
+            case _:
+                self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_0.png")
 
         self.inventorySlotsBackground_image.visible(self.inventoryhided)
         self.inventorySlots_image.visible(self.inventoryhided)
-        for key, value in self.inventoryslots.items():
-            self.inventoryslots[key].visible(self.inventoryhided)
+        self.quickAccesBar.visible(not(self.inventoryhided or self.quickaccesbarhided))
 
-    def quickAccesBarRender(self, player):
-        if player:
-            match player.inventory.currentslot:
-                case None:
-                    self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_0.png")
-                case '1':
-                    self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_1.png")
-                case '2':
-                    self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_2.png")
-                case '3':
-                    self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_3.png")
-                case '4':
-                    self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_4.png")
-                case '5':
-                    self.quickAccesBar.imageedit("src/assets/textures/quick_acces_bar_5.png")
-            self.quickaccesbarhided = False
-        else:
-            self.quickaccesbarhided = True
-        
-        self.quickAccesBar.visible(self.quickaccesbarhided)
-        for key, value in self.inventoryslots.items():
-            if key in ['1', '2', '3', '4', '5']:
-                if value:
-                    self.inventoryslots[key].visible(self.quickaccesbarhided)
-
-    def holdedItemRender(self, mouse, mousestate, paused, player):
+    def holdedItemRender(self, mouse, mousestate, keystate, paused, player):
         #сделать возвышение слоя текущего предмета над другими
-        if not paused:
+        if not paused:  
             if player.inventory.opened:
                 if mousestate[0]:
-                    if not self.mouseswith['0']:
-                        if not player.inventory.tempitemslot:
-                            for key, value in self.inventoryslots.items():
+                    if not self.mouseswitch['0']:
+                        #check collide with inventory slots
+                        for key, value in self.inventoryslots.items():
+                            if value:
                                 if value.itemicon.rect.collidepoint(mouse):
-                                    self.prevslot = key
-                                    player.inventory.tempitemslot = player.inventory.inventoryslots[self.prevslot]
-                                    player.inventory.inventoryslots[self.prevslot] = None
+                                    player.inventory.currenttempslot = key
                                     break
-                            self.mouseswith['0'] = True
-                    if not self.mouseswith['0']:
-                        if player.inventory.tempitemslot:
+                        else:
+                            player.inventory.currenttempslot = None
+
+                        #take/take off
+                        if player.inventory.currenttempslot:
+                            if player.inventory.inventoryslots[player.inventory.currenttempslot] and functions.checkEquivalence(player.inventory.inventoryslots[player.inventory.currenttempslot], player.inventory.tempitem) and player.inventory.inventoryslots[player.inventory.currenttempslot].stackable: 
+                                player.inventory.inventoryslots[player.inventory.currenttempslot].amount += player.inventory.tempitem.amount
+                                player.inventory.tempitem = None
+                            else:
+                                player.inventory.tempitem, player.inventory.inventoryslots[player.inventory.currenttempslot] = player.inventory.inventoryslots[player.inventory.currenttempslot], player.inventory.tempitem
+                        
+                        else:
+                            if player.inventory.tempitem:
+                                emptyslot = functions.founditem(player.inventory.inventoryslots, None)
+                                aviableslot = functions.founditem(player.inventory.inventoryslots, player.inventory.tempitem)
+                                if aviableslot[0] and aviableslot[1]:
+                                    if aviableslot[1].stackable:
+                                        player.inventory.inventoryslots[aviableslot[0]].amount += player.inventory.tempitem.amount
+                                        player.inventory.tempitem = None
+                                    elif emptyslot[0]:
+                                        player.inventory.tempitem, player.inventory.inventoryslots[emptyslot[0]] = player.inventory.inventoryslots[emptyslot[0]], player.inventory.tempitem
+                                elif emptyslot[0]:
+                                    player.inventory.tempitem, player.inventory.inventoryslots[emptyslot[0]] = player.inventory.inventoryslots[emptyslot[0]], player.inventory.tempitem
+                                
+                                if not (aviableslot[0] and emptyslot[0]):
+                                    #Nothing, but i can make items on floor
+                                    player.inventory.tempitem = None
+
+                        self.tempitemslot.moving(mouse) 
+                        self.tempitemslot.iconRender(player.inventory.tempitem)
+                        self.mouseswitch['0'] = True
+                else:
+                    self.mouseswitch['0'] = False
+
+                if mousestate[2]:
+                    if not self.mouseswitch['2']:
+                        if not player.inventory.tempitem:
                             for key, value in self.inventoryslots.items():
-                                if value.itemicon.rect.collidepoint(mouse):
-                                    if self.prevslot != key:
-                                        player.inventory.inventoryslots[key], player.inventory.tempitemslot = player.inventory.tempitemslot, player.inventory.inventoryslots[key]
-                                        self.tempitemslot.iconRender(player.inventory.tempitemslot)
-                                        self.tempitemslot.moving(mouse)
+                                if value:
+                                    if value.itemicon.rect.collidepoint(mouse):
+                                        player.inventory.currenttempslot = key
                                         break
                             else:
-                                player.inventory.inventoryslots[self.prevslot], player.inventory.tempitemslot = player.inventory.tempitemslot, player.inventory.inventoryslots[self.prevslot]
-                            self.mouseswith['0'] = True
+                                player.inventory.currenttempslot = None
+
+                            if player.inventory.currenttempslot:
+                                if player.inventory.inventoryslots[player.inventory.currenttempslot]:
+                                    if player.inventory.inventoryslots[player.inventory.currenttempslot].stackable:
+                                        print(player.inventory.inventoryslots[player.inventory.currenttempslot])
+                                        player.inventory.tempitem = copy.deepcopy(player.inventory.inventoryslots[player.inventory.currenttempslot])#######
+                                        player.inventory.tempitem.amount = math.ceil(player.inventory.inventoryslots[player.inventory.currenttempslot].amount/2)
+                                        player.inventory.inventoryslots[player.inventory.currenttempslot].amount -= player.inventory.tempitem.amount
+                                    else:
+                                        player.inventory.inventoryslots[player.inventory.currenttempslot], player.inventory.tempitem = None, player.inventory.inventoryslots[player.inventory.currenttempslot]
+                        else:
+                            for key, value in self.inventoryslots.items():
+                                if value:
+                                    if value.itemicon.rect.collidepoint(mouse):
+                                        player.inventory.currenttempslot = key
+                                        break
+                            else:
+                                player.inventory.currenttempslot = None
+
+                            if player.inventory.currenttempslot:
+                                if player.inventory.inventoryslots[player.inventory.currenttempslot]:
+                                    if functions.checkEquivalence(player.inventory.inventoryslots[player.inventory.currenttempslot], player.inventory.tempitem) and player.inventory.inventoryslots[player.inventory.currenttempslot].stackable:
+                                        player.inventory.inventoryslots[player.inventory.currenttempslot].amount += 1
+                                        player.inventory.tempitem.amount -= 1
+                                else:
+                                    if player.inventory.tempitem.stackable:
+                                        player.inventory.inventoryslots[player.inventory.currenttempslot] = copy.deepcopy(player.inventory.tempitem)
+                                        player.inventory.inventoryslots[player.inventory.currenttempslot].amount =1
+                                        player.inventory.tempitem.amount -= 1
+                                    else:
+                                        player.inventory.inventoryslots[player.inventory.currenttempslot], player.inventory.tempitem = player.inventory.tempitem, None
+                        self.mouseswitch['2'] = True
                 else:
-                    self.mouseswith['0'] = False
-                if player.inventory.tempitemslot:
-                        self.tempitemslot.moving(mouse)
+                    self.mouseswitch['2'] = False
+
+
+                if player.inventory.tempitem:
+                    self.tempitemslot.moving(mouse)
+                    self.tempitemslot.iconRender(player.inventory.tempitem)
+                else:
+                    self.tempitemslot.iconRender(None)
             else:
-                if player.inventory.tempitemslot:
-                    player.inventory.inventoryslots[self.prevslot] = player.inventory.tempitemslot
-                    player.inventory.tempitemslot = None
+                if player.inventory.tempitem:
+                    key, value = functions.founditem(player.inventory.inventoryslots, None)
+                    player.inventory.inventoryslots[key], player.inventory.tempitem = player.inventory.tempitem, None
+                    self.tempitemslot.iconRender(player.inventory.tempitem)
         else:
-            if player.inventory.tempitemslot:
-                player.inventory.inventoryslots[self.prevslot] = player.inventory.tempitemslot
-                player.inventory.tempitemslot = None
+            if player.inventory.tempitem:
+                key, value = functions.founditem(player.inventory.inventoryslots, None)
+                player.inventory.inventoryslots[key], player.inventory.tempitem = player.inventory.tempitem, None
+                self.tempitemslot.iconRender(player.inventory.tempitem)
+
+    def update(self, mouse, mousestate, keystate, paused, player):
+        self.inventoryRender(player)
+        self.holdedItemRender(mouse, mousestate, keystate, paused, player)
+
+        

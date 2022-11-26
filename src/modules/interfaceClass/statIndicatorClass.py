@@ -18,31 +18,35 @@ class Indicator():
         self.healthbar.moving((self.healthbar.headobject.rect.topleft[0]+56, self.healthbar.headobject.rect.topleft[1]+20))
         self.staminabar.moving((self.healthbar.headobject.rect.topleft[0]+56, self.healthbar.headobject.rect.topleft[1]+60))
         
-        self.healthvalue.moving((self.healthvalue.headobject.rect.topleft[0]+302, self.healthvalue.headobject.rect.topleft[1]+20))
-        self.staminavalue.moving((self.staminavalue.headobject.rect.topleft[0]+302, self.staminavalue.headobject.rect.topleft[1]+60))
+        self.healthvalue.moving((self.healthvalue.headobject.rect.topleft[0]+334, self.healthvalue.headobject.rect.topleft[1]+20))
+        self.staminavalue.moving((self.staminavalue.headobject.rect.topleft[0]+334, self.staminavalue.headobject.rect.topleft[1]+60))
 
 
 
-    def indicatorrender(self, player=None):
-        if player != None:
+    def indicatorrender(self, player):
+        if player:
+            healthratio = player.health / player.maxhealth if player.maxhealth else 0
+            staminaratio = player.stamina / player.maxstamina if player.maxstamina else 0
 
-            healthratio = player.health / player.maxhealth
-            energyratio = player.energy / player.maxenergy
-
-            self.healthbar.sizeedit((round(240*healthratio), 24))
-            self.staminabar.sizeedit((round(240*energyratio), 24))
-            
-            self.healthvalue.textedit(f'{round((player.health/player.maxhealth if player.maxhealth != math.inf else 1)*100)}%', color=(225, 225, 255))
-            self.staminavalue.textedit(f'{round((player.energy/player.maxenergy if player.maxenergy != math.inf else 1)*100)}%', color=(225, 225, 255))
-
-            self.hided = False
+            self.statIndicator.visible(False)
+            self.healthbar.visible(False)
+            self.staminabar.visible(False)
+            self.healthvalue.visible(False)
+            self.staminavalue.visible(False)
 
         else:
-            self.hided = True
-
-        self.statIndicator.visible(self.hided)
-        self.healthbar.visible(self.hided)
-        self.staminabar.visible(self.hided)
-        self.healthvalue.visible(self.hided)
-        self.staminavalue.visible(self.hided)
+            healthratio = 0
+            staminaratio = 0
+            
+            self.statIndicator.visible(True)
+            self.healthbar.visible(True)
+            self.staminabar.visible(True)
+            self.healthvalue.visible(True)
+            self.staminavalue.visible(True)
+            print(staminaratio, player)
+        self.healthbar.sizeedit((round(272*healthratio), 24))
+        self.staminabar.sizeedit((round(272*staminaratio), 24))
+        
+        self.healthvalue.textedit(f'{round((player.health/player.maxhealth if player.maxhealth != math.inf else 1)*100)}%', color=(225, 225, 255))
+        self.staminavalue.textedit(f'{round((player.stamina/player.maxstamina if player.maxstamina != math.inf else 1)*100)}%', color=(225, 225, 255))
   

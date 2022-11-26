@@ -3,7 +3,7 @@ from modules import shapeClass, interfaceClass
 
 class Item():
     
-    def __init__(self, iconimage=None, amount=1, pickingtime=0):
+    def __init__(self, itemname=None, iconimage=None, pickingtime=0, amount=1):
         
         if iconimage:
             self.itemicon = iconimage
@@ -17,7 +17,9 @@ class Item():
         self.pickingdelay = 0
         
         self.itemtype = 'default'
+        self.itemname = itemname
 
+        self.stackable = True
         self.owner = None
         self.picked = False
         self.exist = True

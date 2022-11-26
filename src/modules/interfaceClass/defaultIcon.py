@@ -19,6 +19,8 @@ class Icon():
             match item.itemtype:
                 case 'ammunition':
                     self.itemamount.textedit(str(item.amount), (0, 0, 0))
+                case 'supplies':
+                    self.itemamount.textedit(str(item.amount), (0, 0, 0))
                 case _:
                     self.itemamount.textedit(None, (0, 0, 0))
         else:
@@ -29,6 +31,7 @@ class Icon():
         self.position = position
         self.itemicon.moving(self.position)
         self.itemamount.moving((self.itemicon.position[0]+32, self.itemicon.position[1]+32))
+        self.visible(self.hided)
 
     def visible(self, hided):
         self.hided = hided

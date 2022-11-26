@@ -9,11 +9,9 @@ class Interface():
         self.cursorInterface = interfaceClass.cursorClass.Cursor()
         self.pauseInterface = interfaceClass.pauseClass.Pause(screen)
 
-    def update(self, mouse, mousestate, keystate, paused, player):
+    def update(self, screen, mouse, mousestate, keystate, paused, player):
         self.statIndicatorInterface.indicatorrender(player)
-        self.itemIndecatorInterface.indicatorrender(player)
-        self.inventoryInterface.inventoryRender(player)
-        self.inventoryInterface.quickAccesBarRender(player)
-        self.inventoryInterface.holdedItemRender(mouse, mousestate, paused, player)
+        self.itemIndecatorInterface.indicatorrender(screen, player)
+        self.inventoryInterface.update(mouse, mousestate, keystate, paused, player)
         self.cursorInterface.cursorrender(mouse, mousestate)
         self.pauseInterface.pauserender(paused)

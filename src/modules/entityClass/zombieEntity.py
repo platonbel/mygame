@@ -45,8 +45,8 @@ class Zombie(entityClass.defaultEntity.Entity):
                 self.speedy = (self.speed * direction[1]) if abs(distance[1]) >= self.speed else 1 * direction[1]
                 self.speedx = math.ceil(self.speedx) if self.speedx > 0 else math.floor(self.speedx)
                 self.speedy = math.ceil(self.speedy) if self.speedy > 0 else math.floor(self.speedy)
-                self.position[0] += self.speedx
-                self.position[1] += self.speedy
+                self.position[0] += self.speedx * dtime * TARGET_FPS
+                self.position[1] += self.speedy * dtime * TARGET_FPS
             self.rect.center = (round(self.position[0]), round(self.position[1]))
         else:
             #realise here random moving system
@@ -77,13 +77,15 @@ class Zombie(entityClass.defaultEntity.Entity):
         else:
             self.image.set_alpha(255)
 
-    def healthupdate(self):
+    def statiscticsUpdate(self):
         if self.health <= 0:
             self.health = 0
             self.__del__()
+        if self.health > self.maxhealth:
+            self.health = self.maxhealth
 
     def update(self, screen, dtime, TARGET_FPS):
-        self.healthupdate()
+        self.statiscticsUpdate()
         self.movement(dtime, TARGET_FPS)
         self.targetdetect()
         self.borders(screen)

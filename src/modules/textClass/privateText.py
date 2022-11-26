@@ -25,6 +25,7 @@ class Text(pygame.sprite.Sprite):
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self.moving(self.position)
+        self.visible(self.hided)
 
     def textedit(self, text, color):
         self.text = text
@@ -32,6 +33,7 @@ class Text(pygame.sprite.Sprite):
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self.moving(self.position)
+        self.visible(self.hided)
 
     def moving(self, position):
         self.position = position
