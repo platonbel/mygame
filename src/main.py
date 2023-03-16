@@ -1,16 +1,13 @@
 
 import pygame
-import modules
+import runtime, scripts, assets, classes
 import math, random
 
 def main():
 
     #init the main vars and places
-    SCREEN_WIDTH = 1920
-    SCREEN_HEIGHT = 1080
-
-    BORDERS_WIDTH = 3072
-    BORDERS_HEIGHT = 3072
+    SCREEN_WIDTH = 1200
+    SCREEN_HEIGHT = 900
 
     FPS = 60
     TARGET_FPS = 60
@@ -19,51 +16,39 @@ def main():
     pygame.mixer.init()
     pygame.font.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    borders = (BORDERS_WIDTH, BORDERS_HEIGHT)
     clock = pygame.time.Clock()
-    interface = modules.interfaceClass.defaultInterface.Interface(screen)
-    background = modules.backgroundClass.defaultBackground.Background(screen)
     pygame.display.set_caption("Beliakov Platon")
     
     running = True  
-    paused = False
-    fpsrender = modules.textClass.defaultText.Text(position=(200, 200))
-    player = modules.entityClass.playerEntity.Player(name='Player')
-    zombie = modules.entityClass.zombieEntity.Zombie(name='Zombie')
 
-    #for i in range(1000):
-    #    modules.shapeClass.defaultShape.Shape(position=(random.randint(0, 1920), random.randint(0, 1080)),image="src/assets/textures/ak-47_icon.png")
+    player_ = scripts.entity_create.entity_create("player", "src/assets/configs/entity/player_entity/juggernaut_player_entity.json")
+    test_func_last_file_update = scripts.file_processing.file_get_update_time("src/command_file.json")
 
     while running:
 
         for event in pygame.event.get():
-            keystate = pygame.key.get_pressed()
-            mousestate = pygame.mouse.get_pressed()
-            mouse = pygame.mouse.get_pos()
+            keyValues = pygame.key.get_pressed() 
+            mouseValues = pygame.mouse.get_pressed()
+            mousePosition = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if keystate[pygame.K_ESCAPE]:
+                if keyValues[pygame.K_ESCAPE]:
                     paused = not paused
 
         clock.tick(FPS)
         dtime = 1/FPS  
         screen.fill((255, 255, 255))
-        fpsrender.textedit(str(clock), (0, 0, 0))
 
-        interface.update(screen, mouse, mousestate, keystate, paused, player)
-        background.update(screen)
-        if not paused:
-            modules.entityClass.instances.entityGroup.playerGroup.update(mouse, mousestate, keystate, screen, dtime, TARGET_FPS)
-            modules.entityClass.instances.entityGroup.zombieGroup.update(screen, dtime, TARGET_FPS)
-            modules.entityClass.instances.entityGroup.bulletGroup.update(dtime, TARGET_FPS)
+        scripts.file_processing.test_func("src/command_file.json", test_func_last_file_update, player_.sprite_block_link)
+        test_func_last_file_update = scripts.file_processing.file_get_update_time("src/command_file.json")
 
-        fpsrender.moving(fpsrender.position)
-        modules.backgroundClass.instances.backgroundLayer.defaultLayer.draw(screen)
-        modules.entityClass.instances.entityLayer.defaultLayer.draw(screen)
-        modules.shapeClass.instances.shapeLayer.defaultLayer.draw(screen)
-        modules.textClass.instances.textLayer.defaultLayer.draw(screen)
-        modules.interfaceClass.instances.interfaceLayer.defaultLayer.draw(screen)
+        runtime.objects.items['sprite_block'].update()
+        runtime.objects.items['entity'].update(dtime, TARGET_FPS)
+        runtime.objects.items['secondary_GUI'].update()
+        runtime.objects.items['general_GUI'].update()
+
+        tuple(map(lambda global_layer: global_layer.draw(screen), runtime.global_layers.items.values()))
 
         pygame.display.update()
 
