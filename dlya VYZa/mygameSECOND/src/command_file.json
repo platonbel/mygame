@@ -1,0 +1,7 @@
+{
+    "action": "position_edit",
+    "position": [0, 0],
+    "shift_distance": [0, 0],
+    "shift_side": "topleft",
+    "side": "center"
+}
