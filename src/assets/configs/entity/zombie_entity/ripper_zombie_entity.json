@@ -1,9 +1,0 @@
-{
-    "items": {
-        "object_name": "zombie ripper",
-        "max_health_point_value": 150,
-        "max_stamina_point_value": 150,
-        "constant_velocity_value": 8,
-        "sprite_block_config_link": "src/assets/configs/sprite_block/entity/zombie_entity/ripper_zombie_entity.json"
-    }
-}

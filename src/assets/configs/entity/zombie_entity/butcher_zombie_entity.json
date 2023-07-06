@@ -1,9 +1,0 @@
-{
-    "items": {
-        "object_name": "zombie butcher",
-        "max_health_point_value": 350,
-        "max_stamina_point_value": 75,
-        "constant_velocity_value": 5,
-        "sprite_block_config_link": "src/assets/configs/sprite_block/entity/zombie_entity/butcher_zombie_entity.json"
-    }
-}
